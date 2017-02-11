@@ -1,51 +1,35 @@
-# rtl8812au
+# Installation guide for ANEWISH Wifi Dongle (rtl8812au) on Ubuntu 14.04
 
-Realtek 8812AU/8821AU USB WiFi driver.
+Cloned from https://github.com/abperiasamy/rtl8812AU_8821AU_linux on 2017-02-11 with version 4.3.14
 
-for AC1200 (801.11ac) Wireless Dual-Band USB Adapter
+# Installation
 
-This code is base on version 4.3.14 from https://github.com/diederikdehaas/rtl8812AU
+On Ubuntu 14.04 , version 4.3.14 doesn't work properly (fails on make):
+```
+rtl8812AU_8821AU_linux/os_dep/linux/os_intfs.c:1712:2: error: initialization from incompatible pointer type [-Werror]
+  .ndo_select_queue = rtw_select_queue,
+  ^
+rtl8812AU_8821AU_linux/os_dep/linux/os_intfs.c:1712:2: error: (near initialization for ‘rtw_netdev_ops.ndo_select_queue’) [-Werror]
+```
+
+Instead, checkout the branch 3.13 and run
+
+```
+sudo apt-get update
+sudo apt-get install linux-headers-generic build-essential git
+git clone https://github.com/abperiasamy/rtl8812AU_8821AU_linux.git
+cd ~/rtl8812AU_8821AU_linux
+git checkout 3.13
+make
+sudo make install
+sudo modprobe 8812au
+```
 
 ## Known Supported Devices:
 
 ```
+* ANEWISH Wifi Dongle AC Dual Band 5Ghz 433Mbps
 * COMFAST 1200Mbps USB Wireless Adapter(Model: CF-912AC)
-```
-
-## Compiling with DKMS
-
-```sh
-# sudo make -f Makefile.dkms install
-```
-
-### Compiling for Raspberry Pi
-
-Install kernel headers and other dependencies.
-
-```sh
-# sudo apt-get install linux-image-rpi-rpfv linux-headers-rpi-rpfv dkms build-essential bc
-```
-
-Append following at the end of your ``/boot/config.txt``, reboot your Pi
-
-```sh
-kernel=vmlinuz-3.10-3-rpi
-initramfs initrd.img-3.10-3-rpi followkernel
-```
-
-Edit Makefile and turn on ``CONFIG_PLATFORM_ARM_RPI``, turn off ``CONFIG_PLATFORM_I386_PC``
-
-```sh
-CONFIG_PLATFORM_I386_PC = n
-CONFIG_PLATFORM_ARM_RPI = y
-```
-
-```sh
-# cd /usr/src/rtl8812au
-# sudo make clean
-# sudo make
-# sudo make install
-# sudo modprobe -a rtl8812au
 ```
 
 ## Contributors
